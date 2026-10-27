@@ -16,8 +16,8 @@
   };
 
   env = {
-    PALLET_COLOURS = 32;
-    NUM_SYMBOLS = 2;
+    PALLET_COLOURS = 16;
+    NUM_SYMBOLS = 6;
     MAX_SYMBOL_AMOUNT = 10;
   };
 

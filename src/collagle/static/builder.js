@@ -1,3 +1,5 @@
+const MAX_SIZE = 128;
+
 var current_symbol = undefined;
 
 fetch("/api/get_today").then(res => res.json().then((res_json) => {
@@ -58,7 +60,7 @@ const tr = new Konva.Transformer({
 });
 layer.add(tr);
 
-function tint(hex) {
+function tint() {
     const { r, g, b } = Konva.Util.getRGB(current_symbol.getAttr("current_tint"));
     current_symbol.cache();
     current_symbol.filters([Konva.Filters.Brighten, Konva.Filters.RGB]);
@@ -73,12 +75,25 @@ on_symbol_click = (id) => {
     
     const sym_img = new Image()
     sym_img.onload = () => {
+        let nw = sym_img.naturalWidth;
+        let nh = sym_img.naturalHeight;
+
+        if (!nw || !nh) {
+            nw = sym_img.width || 1;
+            nh = sym_img.height || 1;
+        }
+
+        const k = MAX_SIZE / Math.max(nw, nh);
+        const width = nw * k;
+        const height = nh * k;
+
+
         current_symbol = new Konva.Image({
             x: 0,
             y: 0,
             image: sym_img,
-            width: 64,
-            height: 64,
+            width: width,
+            height: height,
             draggable: true,
             name: "selectable"
         });
@@ -98,6 +113,22 @@ on_symbol_click = (id) => {
 
             tint();
             tr.forceUpdate();
+        });
+
+        current_symbol.on("dragend", () => {
+            const box = current_symbol.getClientRect();
+            const offScreen =  (
+                box.x + box.width  < 0 ||
+                box.y + box.height < 0 ||
+                box.x > stage.width() ||
+                box.y > stage.height()
+            );
+
+            if (offScreen) {
+                tr.nodes([]);
+                current_symbol.destroy()
+                current_symbol = undefined;
+            }
         });
     }
     sym_img.src = window.res_json["symbols"][id][0];
