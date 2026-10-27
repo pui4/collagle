@@ -3,8 +3,8 @@ current_moving = true;
 
 window.symbol_selected = (symbol_path) => {
     current_selection = poopengine.create_object({
-        width: 64,
-        height: 64,
+        width: 256,
+        height: 256,
         x: 0,
         y: 0,
         image: symbol_path,
