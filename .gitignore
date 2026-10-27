@@ -9,5 +9,4 @@ devenv.local.yaml
 # pre-commit
 .pre-commit-config.yaml
 
-src/collagle/__pycache__
 /src/collagle/__pycache__

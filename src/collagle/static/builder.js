@@ -1,105 +1,83 @@
-window.current_selection = undefined;
-current_moving = true;
+var current_symbol = undefined;
 
-class SymbolClass {
-  constructor(width, height, image) {
-    this.width = width;
-    this.height = height;
-    this.pos = { x: 0, y: 0};
-    this.symbol = image
-    this.base = poopengine.create_object({
-      width: width,
-      height: height,
-      x: 0,
-      y: 0,
-      image: image,
-      tint: window.res_json["pallet"][0]
-    });
+fetch("/api/get_today").then(res => res.json().then((res_json) => {
+    console.log(res_json);
+    window.res_json = res_json
 
-    this.first_place = true;
-
-    const base_update = this.base.update;
-    this.base.update = () => {
-      base_update.apply(this);
-
-      if (this.first_place) {
-        this.pos.x = poopengine.input.mouse_pos.x - this.base.width / 2
-        this.pos.y = poopengine.input.mouse_pos.y - this.base.height / 2
-
-        if (poopengine.input.click) {
-          this.first_place = false;
-        }
-      } else {
-        if (poopengine.input.hovering(this.base) && poopengine.input.click && this.border === undefined) {
-          this.border = poopengine.create_object({
-            width: this.width,
-            height: this.height,
-            x: this.pos.x,
-            y: this.pos.y,
-            stroke: 4
-          });
-          window.current_selection = this;
-        } else if (poopengine.input.click && this.border !== undefined) {
-          if (window.current_selection == this) {
-            window.current_selection = poopengine.input.object_at(poopengine.input.mouse_pos.x, poopengine.input.mouse_pos.y)
-          }
-          this.border.destroy();
-          this.border = undefined;
-        }
-
-        if (this.border !== undefined && poopengine.input.hovering(this.border) && poopengine.input.mousedown) {
-          this.pos.x = poopengine.input.mouse_pos.x - this.base.width / 2
-          this.pos.y = poopengine.input.mouse_pos.y - this.base.height / 2
-        }
-      }
-
-      this.base.x = this.pos.x
-      this.base.y = this.pos.y
-      if (this.border !== undefined) {
-        this.border.x = this.pos.x;
-        this.border.y = this.pos.y;
-      }
+    const pallet_ctn = document.getElementById("pallet");
+    for (let i = 0; i < res_json["pallet"].length; i++) {
+        const icon = document.createElement("div");
+        icon.classList.add("col_icon");
+        icon.style = `background-color: ${res_json["pallet"][i]}`
+        icon.onclick = () => on_col_click(i);
+        pallet_ctn.appendChild(icon);
     }
 
-    this.destroy = () => {
-      this.base.destroy();
-      if (this.border !== undefined) {
-        this.border.destroy();
-      }
+    const symbol_ctn = document.getElementById("symbols");
+    for (let i = 0; i < res_json["symbols"].length; i++) {
+        const icon = document.createElement("img");
+        icon.src = res_json["symbols"][i][0];
+        icon.onclick = () => on_symbol_click(i);
+        icon.classList.add("symb_icon");
+        symbol_ctn.appendChild(icon);
     }
-  }
+}));
+
+const stage = new Konva.Stage({
+    container: 'container',
+    width: 700,
+    height: 500
+});
+const layer = new Konva.Layer();
+stage.add(layer);
+const tr = new Konva.Transformer({
+    enabledAnchors: ["top-left", "top-right", "bottom-left", "bottom-right"],
+    borderStroke: "#205",
+    borderStrokeWidth: 3,
+
+    anchorFill: "#fffa",
+    anchorStroke: "#205",
+    anchorStrokeWidth: 2,
+    anchorSize: 20,
+    anchorCornerRadius: 6,
+
+    anchorStyleFunc: (anchor) => {
+        if (anchor.hasName("top-left")) {
+            anchor.fill("#f55a");
+        }
+        if (anchor.hasName("top-right")) {
+            anchor.fill("#55fa");
+        }
+        if (anchor.hasName("bottom-right")) {
+            anchor.fill("#5f5a");
+        }
+        if (anchor.hasName("bottom-left")) {
+            anchor.fill("#002a");
+        }
+    }
+});
+layer.add(tr);
+
+on_symbol_click = (id) => {
+    console.log(window.res_json["symbols"][id][0]);
+    
+    const sym_img = new Image()
+    sym_img.onload = () => {
+        current_symbol = new Konva.Image({
+            x: 0,
+            y: 0,
+            image: sym_img,
+            width: 64,
+            height: 64,
+            draggable: true,
+            name: "selectable"
+        });
+        layer.add(current_symbol);
+        tr.nodes([current_symbol]);
+    }
+    sym_img.src = window.res_json["symbols"][id][0];
 }
 
-window.symbol_selected = (symbol_path) => {
-  if (window.current_selection !== undefined && window.current_selection.first_place) {
-    window.current_selection.destroy();
-  }
-  window.current_selection = new SymbolClass(
-    256,
-    256,
-    symbol_path
-  )
+on_col_click = (id) => {
+    
 }
-
-window.colour_selected = (colour) => {
-  console.log(colour)
-  if (window.current_selection != undefined) {
-    window.current_selection.base.tint = colour
-  }
-}
-
-const originalStart = poopengine.start;
-poopengine.start = function () {
-  originalStart.apply(this);
-}
-
-const originalUpdate = poopengine.update;
-poopengine.update = function () {
-  originalUpdate.apply(this);
-}
-
-poopengine.resize = function () {
-  // Code goes here:
-}
-
-poopengine.start();

@@ -1,50 +1,18 @@
 {% extends "base.jinja" %}
 
 {% block head %}
-    <script src="static/poopengine.js"></script>
+    <script src="https://unpkg.com/konva@10/konva.min.js"></script>
     <link rel="stylesheet" href="static/builder.css">
 {% endblock %}
 
 {% block content %}
-    <script>
-        fetch("/api/get_today").then(res => res.json().then((res_json) => {
-            console.log(res_json);
-            window.res_json = res_json
-
-            const pallet_ctn = document.getElementById("pallet");
-            for (let i = 0; i < res_json["pallet"].length; i++) {
-                const icon = document.createElement("div");
-                icon.classList.add("col_icon");
-                icon.style = `background-color: ${res_json["pallet"][i]}`
-                icon.onclick = () => on_col_click(i);
-                pallet_ctn.appendChild(icon);
-            }
-
-            const symbol_ctn = document.getElementById("symbols");
-            for (let i = 0; i < res_json["symbols"].length; i++) {
-                const icon = document.createElement("img");
-                icon.src = res_json["symbols"][i][0];
-                icon.onclick = () => on_symbol_click(i);
-                icon.classList.add("symb_icon");
-                symbol_ctn.appendChild(icon);
-            }
-        }));
-
-        on_symbol_click = (id) => {
-            console.log(window.res_json["symbols"][id][0]);
-            window.symbol_selected(window.res_json["symbols"][id][0]);
-        }
-
-        on_col_click = (id) => {
-            window.colour_selected(window.res_json["pallet"][id])
-        }
-    </script>
-
-    <poopengine-window script="static/builder.js" width=1280 height=720></poopengine-window>
+    <div id="container"></div>
 
     <ul class="pallet" id="pallet">
     </ul>
 
     <ul class="symbols" id="symbols">
     </ul>
+
+    <script src="static/builder.js"></script>
 {% endblock %}

@@ -38,6 +38,10 @@ app.cli.add_command(init_db_command)
 def home():
     return render_template("home.jinja", has_cookie=False)
 
+@app.route("/test")
+def test():
+    return render_template("test_builder.jinja")
+
 def gen_today(seed: str):
     rng = random.Random(seed)
     
