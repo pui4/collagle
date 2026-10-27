@@ -74,6 +74,7 @@ on_symbol_click = (id) => {
         });
         layer.add(current_symbol);
         tr.nodes([current_symbol]);
+        tr.moveToTop();
     }
     sym_img.src = window.res_json["symbols"][id][0];
 }
@@ -81,3 +82,15 @@ on_symbol_click = (id) => {
 on_col_click = (id) => {
     
 }
+
+stage.on("mousedown tap", (e) => {
+    if (e.target === stage) {
+        tr.nodes([]);
+        return;
+    }
+
+    if (e.target.hasName("selectable")) {
+        tr.nodes([e.target]);
+        tr.moveToTop();
+    }
+});
