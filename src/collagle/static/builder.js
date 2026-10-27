@@ -58,6 +58,16 @@ const tr = new Konva.Transformer({
 });
 layer.add(tr);
 
+function tint(hex) {
+    const { r, g, b } = Konva.Util.getRGB(current_symbol.getAttr("current_tint"));
+    current_symbol.cache();
+    current_symbol.filters([Konva.Filters.Brighten, Konva.Filters.RGB]);
+    current_symbol.brightness(1);
+    current_symbol.red(r);
+    current_symbol.green(g);
+    current_symbol.blue(b);
+}
+
 on_symbol_click = (id) => {
     console.log(window.res_json["symbols"][id][0]);
     
@@ -75,12 +85,27 @@ on_symbol_click = (id) => {
         layer.add(current_symbol);
         tr.nodes([current_symbol]);
         tr.moveToTop();
+
+        current_symbol.setAttr("current_tint", window.res_json["pallet"][0])
+        tint();
+
+        current_symbol.on("transformend", () => {
+            current_symbol.clearCache();
+
+            current_symbol.width(current_symbol.width() * Math.abs(current_symbol.scaleX()));
+            current_symbol.height(current_symbol.height() * Math.abs(current_symbol.scaleY()));
+            current_symbol.scale({ x: 1, y: 1});
+
+            tint();
+            tr.forceUpdate();
+        });
     }
     sym_img.src = window.res_json["symbols"][id][0];
 }
 
 on_col_click = (id) => {
-    
+    current_symbol.setAttr("current_tint", window.res_json["pallet"][id])
+    tint()
 }
 
 stage.on("mousedown tap", (e) => {
