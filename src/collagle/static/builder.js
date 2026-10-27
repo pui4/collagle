@@ -36,6 +36,8 @@ poopengine.update = function () {
         current_selection = undefined;
     }
   }
+
+  console.log(poopengine.fps)
 }
 
 poopengine.resize = function () {
