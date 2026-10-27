@@ -5,6 +5,7 @@ class poopengine_class {
     this.display = { width: 300, height: 200 };
     this.context = null;
     this.objects = [];
+    const engine = this;
     this.input = new class input {
       constructor() {
         this.keydown = null;
@@ -17,8 +18,8 @@ class poopengine_class {
         this.mouse_over = false;
         this.hovering = (object) => {
           if (this.mouse_pos.x != null) {
-            const index = this.objects.indexOf(object);
-            const array = this.objects.slice(index + 1);
+            const index = engine.objects.indexOf(object);
+            const array = engine.objects.slice(index + 1);
 
             for (let i = 0; i < array.length; i++) {
               if (
@@ -42,6 +43,17 @@ class poopengine_class {
               return false;
             }
           }
+        }
+        this.object_at = (x, y) => {
+          for (let i = 0; i < engine.objects.length - 1; i++) {
+            const object = engine.objects[i];
+            if (x >= object.x && x <= object.x + object.width &&
+                y >= object.y && y <= object.y + object.height
+            ) {
+              return object
+            }
+          }
+          return undefined;
         }
       }
     }
@@ -186,6 +198,7 @@ class poopengine_class {
         x,
         y,
         colour,
+        stroke,
         image,
         tint,
         tile,
@@ -264,7 +277,12 @@ class poopengine_class {
           ctx.fillText(this.text, this.x, this.text_size + this.y, this.width);
         }
         // Box logic
-        else {
+        else if (stroke !== undefined) {
+          this.stroke = stroke;
+          ctx.strokeStyle = this.colour;
+          ctx.lineWidth = this.stroke;
+          ctx.strokeRect(this.x, this.y, this.width, this.height);
+        } else {
           ctx.fillStyle = this.colour;
           ctx.fillRect(this.x, this.y, this.width, this.height);
         }
@@ -345,7 +363,11 @@ class poopengine_class {
             }
           }
           // Box logic
-          else {
+          else if (this.stroke !== undefined) {
+            ctx.strokeStyle = this.colour;
+            ctx.lineWidth = this.stroke;
+            ctx.strokeRect(this.x, this.y, this.width, this.height);
+          } else {
             ctx.fillStyle = this.colour;
             ctx.fillRect(this.x, this.y, this.width, this.height);
           }
@@ -368,6 +390,7 @@ class poopengine_class {
       x,
       y,
       colour,
+      stroke,
       image,
       tint,
       tile,

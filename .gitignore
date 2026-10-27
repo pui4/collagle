@@ -10,3 +10,4 @@ devenv.local.yaml
 .pre-commit-config.yaml
 
 src/collagle/__pycache__
+/src/collagle/__pycache__
