@@ -1,0 +1,12 @@
+.col_icon {
+    width: 64px;
+    height: 64px;
+    background-color: #ff5733;   /* your hex value */
+    -webkit-mask: url(col_icon.png) no-repeat center / contain;
+    mask: url(col_icon.png) no-repeat center / contain;
+}
+
+.symb_icon {
+    width: 64px;
+    height: 64px;
+}
