@@ -227,7 +227,13 @@ class poopengine_class {
               off.height = this.height;
               const octx = off.getContext("2d");
 
-              octx.drawImage(this.image, 0, 0, off.width, off.height);
+              const iw = this.image.naturalWidth || this.width;
+              const ih = this.image.naturalHeight || this.height;
+              const scale = Math.min(off.width / iw, off.height / ih);
+              const dw = iw * scale;
+              const dh = ih * scale;
+
+              octx.drawImage(this.image, (off.width - dw) / 2, (off.height - dh) / 2, dw, dh);
               octx.globalCompositeOperation = "source-in";
               octx.fillStyle = tint
               octx.fillRect(0, 0, off.width, off.height);
@@ -279,7 +285,13 @@ class poopengine_class {
               off.height = this.height;
               const octx = off.getContext("2d");
 
-              octx.drawImage(this.orig_img, 0, 0, off.width, off.height);
+              const iw = this.image.naturalWidth || this.width;
+              const ih = this.image.naturalHeight || this.height;
+              const scale = Math.min(off.width / iw, off.height / ih);
+              const dw = iw * scale;
+              const dh = ih * scale;
+
+              octx.drawImage(this.image, (off.width - dw) / 2, (off.height - dh) / 2, dw, dh);
               octx.globalCompositeOperation = "source-in";
               octx.fillStyle = this.tint;
               octx.fillRect(0, 0, off.width, off.height);
