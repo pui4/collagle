@@ -146,6 +146,7 @@ stage.on("mousedown tap", (e) => {
     }
 
     if (e.target.hasName("selectable")) {
+        current_symbol = e.target;
         tr.nodes([e.target]);
         tr.moveToTop();
     }
