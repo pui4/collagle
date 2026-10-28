@@ -20,11 +20,17 @@ fetch("/api/get_today").then(res => res.json().then((res_json) => {
     const symbol_ctn = document.getElementById("symbols");
     for (let i = 0; i < res_json["symbols"].length; i++) {
         const li = document.createElement("li");
+        const div = document.createElement("div");
+        const amount = document.createElement("p");
+        amount.classList.add("sums");
+        amount.innerText = res_json["symbols"][i][1];
         const icon = document.createElement("img");
         icon.src = res_json["symbols"][i][0];
         icon.onclick = () => on_symbol_click(i);
         icon.classList.add("symb_icon");
-        li.appendChild(icon);
+        div.appendChild(icon)
+        div.appendChild(amount)
+        li.appendChild(div);
         symbol_ctn.appendChild(li);
     }
 }));
@@ -72,70 +78,79 @@ function tint() {
     current_symbol.red(r);
     current_symbol.green(g);
     current_symbol.blue(b);
+
+    current_symbol.drawHitFromCache(0.5);
 }
 
 on_symbol_click = (id) => {
     console.log(window.res_json["symbols"][id][0]);
+
+    const amount = document.getElementsByClassName("sums")[id];
     
-    const sym_img = new Image()
-    sym_img.onload = () => {
-        let nw = sym_img.naturalWidth;
-        let nh = sym_img.naturalHeight;
+    if (amount.innerText > 0) {
+        amount.innerText -= 1;
 
-        if (!nw || !nh) {
-            nw = sym_img.width || 1;
-            nh = sym_img.height || 1;
-        }
+        const sym_img = new Image()
+        sym_img.onload = () => {
+            let nw = sym_img.naturalWidth;
+            let nh = sym_img.naturalHeight;
 
-        const k = MAX_SIZE / Math.max(nw, nh);
-        const width = nw * k;
-        const height = nh * k;
-
-
-        current_symbol = new Konva.Image({
-            x: 0,
-            y: 0,
-            image: sym_img,
-            width: width,
-            height: height,
-            draggable: true,
-            name: "selectable"
-        });
-        layer.add(current_symbol);
-        tr.nodes([current_symbol]);
-        tr.moveToTop();
-
-        current_symbol.setAttr("current_tint", window.res_json["pallet"][0])
-        tint();
-
-        current_symbol.on("transformend", () => {
-            current_symbol.clearCache();
-
-            current_symbol.width(current_symbol.width() * Math.abs(current_symbol.scaleX()));
-            current_symbol.height(current_symbol.height() * Math.abs(current_symbol.scaleY()));
-            current_symbol.scale({ x: 1, y: 1});
-
-            tint();
-            tr.forceUpdate();
-        });
-
-        current_symbol.on("dragend", () => {
-            const box = current_symbol.getClientRect();
-            const offScreen =  (
-                box.x + box.width  < 0 ||
-                box.y + box.height < 0 ||
-                box.x > stage.width() ||
-                box.y > stage.height()
-            );
-
-            if (offScreen) {
-                tr.nodes([]);
-                current_symbol.destroy()
-                current_symbol = undefined;
+            if (!nw || !nh) {
+                nw = sym_img.width || 1;
+                nh = sym_img.height || 1;
             }
-        });
+
+            const k = MAX_SIZE / Math.max(nw, nh);
+            const width = nw * k;
+            const height = nh * k;
+
+
+            current_symbol = new Konva.Image({
+                x: 0,
+                y: 0,
+                image: sym_img,
+                width: width,
+                height: height,
+                draggable: true,
+                name: "selectable",
+                id: id
+            });
+            layer.add(current_symbol);
+            tr.nodes([current_symbol]);
+            tr.moveToTop();
+
+            current_symbol.setAttr("current_tint", window.res_json["pallet"][0])
+            tint();
+
+            current_symbol.on("transformend", () => {
+                current_symbol.clearCache();
+
+                current_symbol.width(current_symbol.width() * Math.abs(current_symbol.scaleX()));
+                current_symbol.height(current_symbol.height() * Math.abs(current_symbol.scaleY()));
+                current_symbol.scale({ x: 1, y: 1});
+
+                tint();
+                tr.forceUpdate();
+            });
+
+            current_symbol.on("dragend", () => {
+                const box = current_symbol.getClientRect();
+                const offScreen =  (
+                    box.x + box.width  < 0 ||
+                    box.y + box.height < 0 ||
+                    box.x > stage.width() ||
+                    box.y > stage.height()
+                );
+
+                if (offScreen) {
+                    tr.nodes([]);
+                    current_symbol.destroy()
+                    current_symbol = undefined;
+                }
+            });
+        }
+        sym_img.src = window.res_json["symbols"][id][0];
     }
-    sym_img.src = window.res_json["symbols"][id][0];
 }
 
 on_col_click = (id) => {
