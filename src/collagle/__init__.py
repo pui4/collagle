@@ -3,7 +3,7 @@ import random
 import click
 from pathlib import Path
 from datetime import date
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, make_response
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, mapped_column
 from sqlalchemy.dialects.postgresql import JSONB
@@ -25,6 +25,12 @@ class Pallet(db.Model):
 class Symbols(db.Model):
     date = mapped_column(db.String, primary_key=True)
     symbols = mapped_column(JSONB)
+    
+class Content(db.Model):
+    id = mapped_column(db.Integer, primary_key=True, autoincrement=True)
+    data = mapped_column(JSONB)
+    date = mapped_column(db.String, index=True)
+    subtitle = mapped_column(db.String)
 
 @click.command("init-db")
 def init_db_command():
@@ -36,7 +42,7 @@ app.cli.add_command(init_db_command)
 
 @app.route("/")
 def home():
-    return render_template("home.jinja", has_cookie=False)
+    return render_template("home.jinja", has_cookie=request.cookies.get(date.today().isoformat(), default=False))
 
 @app.route("/test")
 def test():
@@ -90,7 +96,47 @@ def get_today():
             "symbols": symbols.symbols,
             "pallet": pallet.pallet
         })
+
+@app.route("/api/submit", methods=['POST'])
+def submit():
+    json = request.json
     
+    try:
+        day = date.today().isoformat()
+        pallet = db.session.get(Pallet, day)
+        symbols = db.session.get(Symbols, day)
+        
+        objects = json["children"][0]["children"]
+        
+        object_dict = {}
+        for object in objects:
+            attrs = object["attrs"]
+            if attrs["id"] in object_dict:
+                object_dict[attrs["id"]] += 1
+                
+                if object_dict[attrs["id"]] > symbols.symbols[attrs["id"]][1]: # type: ignore
+                    return "INVALID", 403
+            else:
+                object_dict[attrs["id"]] = 0
+            
+            if attrs["current_tint"] not in pallet.pallet: # type: ignore
+                return "INVALID", 403
+        
+        content = Content(date=day, subtitle=json["attrs"]["subtitle"], data=json) # type: ignore
+        db.session.add(content)
+        db.session.commit()
+        
+        resp = make_response("OK")
+        resp.set_cookie(
+            day,
+            "1",
+            max_age=60 * 60 * 24,
+        )
+        
+        return resp
+    except Exception as e:
+        print(e)
+        return "INVALID", 403
 
 def main() -> None:
     app.run(debug=True, host="0.0.0.0")

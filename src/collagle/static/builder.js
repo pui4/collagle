@@ -113,7 +113,8 @@ on_symbol_click = (id) => {
                 height: height,
                 draggable: true,
                 name: "selectable",
-                id: id
+                id: id,
+                img_url: window.res_json["symbols"][id][0]
             });
             layer.add(current_symbol);
             tr.nodes([current_symbol]);
@@ -143,9 +144,7 @@ on_symbol_click = (id) => {
                 );
 
                 if (offScreen) {
-                    tr.nodes([]);
-                    current_symbol.destroy()
-                    current_symbol = undefined;
+                    remove();
                 }
             });
         }
@@ -189,7 +188,32 @@ function move_up() {
 function remove() {
     if (current_symbol !== undefined) {
         tr.nodes([]);
+
+        const id = current_symbol.getAttr("id");
+
         current_symbol.destroy();
         current_symbol = undefined;
+
+        const amount = document.getElementsByClassName("sums")[id]
+        amount.innerText = parseInt(amount.innerText) + 1;
     }
+}
+
+function submit() {
+    const subtitle = document.getElementById("subtitle").value
+    stage.setAttr("subtitle", subtitle);
+
+    tr.destroy();
+    const json = stage.toJSON();
+    console.log(json);
+
+    fetch("/api/submit", {
+        method: "post",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: json
+    }).then((resp) => {
+        window.location.reload();
+    })
 }
