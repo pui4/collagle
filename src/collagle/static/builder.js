@@ -8,20 +8,24 @@ fetch("/api/get_today").then(res => res.json().then((res_json) => {
 
     const pallet_ctn = document.getElementById("pallet");
     for (let i = 0; i < res_json["pallet"].length; i++) {
+        const li = document.createElement("li");
         const icon = document.createElement("div");
         icon.classList.add("col_icon");
         icon.style = `background-color: ${res_json["pallet"][i]}`
         icon.onclick = () => on_col_click(i);
-        pallet_ctn.appendChild(icon);
+        li.appendChild(icon)
+        pallet_ctn.appendChild(li);
     }
 
     const symbol_ctn = document.getElementById("symbols");
     for (let i = 0; i < res_json["symbols"].length; i++) {
+        const li = document.createElement("li");
         const icon = document.createElement("img");
         icon.src = res_json["symbols"][i][0];
         icon.onclick = () => on_symbol_click(i);
         icon.classList.add("symb_icon");
-        symbol_ctn.appendChild(icon);
+        li.appendChild(icon);
+        symbol_ctn.appendChild(li);
     }
 }));
 
@@ -141,6 +145,7 @@ on_col_click = (id) => {
 
 stage.on("mousedown tap", (e) => {
     if (e.target === stage) {
+        current_symbol = undefined;
         tr.nodes([]);
         return;
     }
@@ -151,3 +156,25 @@ stage.on("mousedown tap", (e) => {
         tr.moveToTop();
     }
 });
+
+function move_down() {
+    if (current_symbol !== undefined) {
+        current_symbol.moveDown();
+        layer.batchDraw();
+    }
+}
+
+function move_up() {
+    if (current_symbol !== undefined) {
+        current_symbol.moveUp();
+        layer.batchDraw();
+    }
+}
+
+function remove() {
+    if (current_symbol !== undefined) {
+        tr.nodes([]);
+        current_symbol.destroy();
+        current_symbol = undefined;
+    }
+}

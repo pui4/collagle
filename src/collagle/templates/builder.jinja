@@ -8,10 +8,16 @@
 {% block content %}
     <div id="container"></div>
 
-    <ul class="pallet" id="pallet">
+    <ul id="pallet">
     </ul>
 
-    <ul class="symbols" id="symbols">
+    <ul id="symbols">
+    </ul>
+
+    <ul>
+        <li><img src="static/arrowicon.svg" class="symb_icon" onclick=move_up()></li>
+        <li><img src="static/arrowicon.svg" style="transform: rotate(180deg);" class="symb_icon" onclick=move_down()></li>
+        <li><img src="static/binicon.svg" class="symb_icon" onclick=remove()></li>
     </ul>
 
     <script src="static/builder.js"></script>

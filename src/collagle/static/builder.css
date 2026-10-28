@@ -10,3 +10,8 @@
     width: 64px;
     height: 64px;
 }
+
+#container {
+    background-color: white;
+    width: fit-content;
+}
