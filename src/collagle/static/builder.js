@@ -2,6 +2,14 @@ const MAX_SIZE = 128;
 
 var current_symbol = undefined;
 
+const frames = [
+    ["/static/frames/0.png", 0.451030928],
+    ["/static/frames/1.png", 1.612903226],
+    ["/static/frames/2.png", 0.574712644],
+    ["/static/frames/3.png", 0.634057971],
+    ["/static/frames/4.png", 0.56]
+];
+
 fetch("/api/get_today").then(res => res.json().then((res_json) => {
     console.log(res_json);
     window.res_json = res_json
@@ -21,6 +29,7 @@ fetch("/api/get_today").then(res => res.json().then((res_json) => {
     for (let i = 0; i < res_json["symbols"].length; i++) {
         const li = document.createElement("li");
         const div = document.createElement("div");
+        div.classList.add("symb_ctn");
         const amount = document.createElement("p");
         amount.classList.add("sums");
         amount.innerText = res_json["symbols"][i][1];
@@ -89,6 +98,11 @@ on_symbol_click = (id) => {
     
     if (amount.innerText > 0) {
         amount.innerText -= 1;
+
+        if (amount.innerText == 0) {
+            const image = document.getElementsByClassName("symb_icon")[id];
+            image.classList.add("disabled");
+        }
 
         const sym_img = new Image()
         sym_img.onload = () => {
@@ -195,11 +209,42 @@ function remove() {
         current_symbol = undefined;
 
         const amount = document.getElementsByClassName("sums")[id]
+        
+        if (amount.innerText == 0) {
+            const image = document.getElementsByClassName("symb_icon")[id];
+            image.classList.remove("disabled");
+        }
+
         amount.innerText = parseInt(amount.innerText) + 1;
     }
 }
 
 function submit() {
+    const modal = document.getElementById("modal");
+    modal.style = "display: flex;"
+
+    const frame_ctn = document.getElementById("frame");
+    frame_ctn.innerHTML = "";
+
+    const target_frame = frames[Math.floor(Math.random() * frames.length)];
+
+    const frame_img = new Image();
+    frame_img.src = target_frame[0];
+    frame_img.onload = () => {
+        const frame_img_ele = document.createElement("img");
+        frame_img_ele.setAttribute("src", target_frame[0]);
+        frame_img_ele.style = `width: ${Math.floor(frame_img.naturalWidth * target_frame[1])}px;`;
+        console.log(`width: ${Math.floor(frame_img.naturalWidth * target_frame[1])}px;`);
+        frame_ctn.appendChild(frame_img_ele);
+    };
+}
+
+function modal_cancel() {
+    const modal = document.getElementById("modal");
+    modal.style = "display: none;"
+}
+
+function modal_submit() {
     const subtitle = document.getElementById("subtitle").value
     stage.setAttr("subtitle", subtitle);
 

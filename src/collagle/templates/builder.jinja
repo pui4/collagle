@@ -6,22 +6,49 @@
 {% endblock %}
 
 {% block content %}
-    <div id="container"></div>
+    <svg width="0" height="0" style="position:absolute">
+        <filter id="wobble">
+            <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" seed="3" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+    </svg>
 
-    <ul id="pallet">
-    </ul>
+    <div class="main_ctn">
+        <div class="canvas_ctn">
+            <div class="border">
+                <ul class="items vert toolbar">
+                    <li style="padding-top: 15px;"><img src="static/arrowicon.svg" class="toolbar_icon" onclick=move_up() title="Move up a layer"></li>
+                    <li><img src="static/arrowicon.svg" style="transform: rotate(180deg);" class="toolbar_icon" onclick=move_down() title="Move down a layer"></li>
+                    <li><img src="static/binicon.svg" class="toolbar_icon" onclick=remove() title="Delete"></li>
+                    <li style="margin-top: auto;"><img src="static/tickicon.svg" class="toolbar_icon" onclick="submit()" title="Submit"></li>
+                </ul>
+            </div>
+            <div id="container" class="border"></div>
+            <div class="border">
+                <ul id="pallet" class="items vert"></ul>
+            </div>
+        </div>
+        <div class="border">
+            <ul id="symbols" class="items hori"></ul>
+        </div>
+    </div>
 
-    <ul id="symbols">
-    </ul>
-
-    <ul>
-        <li><img src="static/arrowicon.svg" class="symb_icon" onclick=move_up()></li>
-        <li><img src="static/arrowicon.svg" style="transform: rotate(180deg);" class="symb_icon" onclick=move_down()></li>
-        <li><img src="static/binicon.svg" class="symb_icon" onclick=remove()></li>
-    </ul>
-    <img src="static/tickicon.svg" class="symb_icon" onclick="submit()">
-
-    <input type="text" id="subtitle">
+    <div id="modal">
+        <div class="border">
+            <div class="modal">
+                <div id="frame"></div>
+                <div style="margin-top: auto;">
+                    <div class="border">
+                        <input type="text" id="subtitle" placeholder="Caption">
+                    </div>
+                    <div class="buttons">
+                        <div class="border"><p class="button" onclick="modal_submit()">Submit</p></div>
+                        <div class="border"><p class="button" onclick="modal_cancel()">Cancel</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="static/builder.js"></script>
 {% endblock %}

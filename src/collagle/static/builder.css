@@ -4,14 +4,161 @@
     background-color: #ff5733;   /* your hex value */
     -webkit-mask: url(col_icon.png) no-repeat center / contain;
     mask: url(col_icon.png) no-repeat center / contain;
+    cursor: pointer;
 }
 
 .symb_icon {
     width: 64px;
     height: 64px;
+    cursor: pointer;
 }
 
 #container {
     background-color: white;
     width: fit-content;
+    margin: 10px;
+}
+
+.border {
+    position: relative;
+    background: white;
+    border-radius: 14px;
+    padding: 8px;
+    width: fit-content;
+    margin: auto;
+}
+
+.border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 8px solid #000;
+    border-radius: 14px;
+    filter: url(#wobble);
+    pointer-events: none;
+}
+
+.items {
+    width: fit-content;
+    list-style-type: none;
+    padding-left: 15px;
+    padding-right: 15px;
+    overflow: scroll;
+    margin: 0;
+}
+
+.hori {
+    width: 670px;
+    overflow: hidden;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+.hori li {
+    float: left;
+    padding-right: 15px;
+}
+
+.vert {
+    height: 500px;
+}
+.vert li {
+    padding-bottom: 15px;
+}
+
+.sums {
+    position: absolute;
+    top: -10px;
+    right: 0;
+    pointer-events: none;
+    background-color: white;
+    height: 22px;
+    min-width: 22px;
+    border-radius: 500px;
+    text-align: center;
+}
+
+.symb_ctn {
+    position: relative;
+    width: 64px;
+    height: 64px;
+}
+
+.canvas_ctn {
+    display: flex;
+    align-items: flex-start;
+}
+
+.main_ctn {
+    width: fit-content;
+    margin: auto;
+}
+
+.toolbar {
+    display: flex;
+    flex-direction: column;
+}
+
+.toolbar_icon {
+    width: 64px;
+    height: 64px;
+    cursor: pointer;
+}
+
+.disabled {
+    cursor: not-allowed;
+    filter: opacity(0.5);
+}
+
+#modal {
+    backdrop-filter: blur(10px);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    justify-content: center;
+    align-items: center;
+    display: none;
+}
+
+.modal {
+    width: 75vw;
+    height: 75vh;
+    display: none;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.buttons {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 50px;
+}
+
+.button {
+    margin: 5px;
+    cursor: pointer;
+}
+
+#subtitle {
+    border: none;
+    outline: none;
+    font-family: "Gochi Hand", cursive;
+    font-weight: 400;
+    font-style: normal;
+    font-size: large;
+}
+#subtitle:focus {
+    border: none;
+    outline: none;
+}
+.border:has(> #subtitle:focus)::before {
+    border-color: lightslategray;
+}
+
+#frame {
+    padding-top: 50px;
 }
