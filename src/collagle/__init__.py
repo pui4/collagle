@@ -122,7 +122,15 @@ def submit():
             if attrs["current_tint"] not in pallet.pallet: # type: ignore
                 return "INVALID", 403
         
-        content = Content(date=day, subtitle=json["attrs"]["subtitle"], data=json) # type: ignore
+        if type(json["attrs"]["subtitle"]) is not str or len(json["attrs"]["subtitle"]) > 500:
+            return "INVALID", 403
+        
+        if json["attrs"]["subtitle"] == "":
+            subtitle = "Untitled"
+        else:
+            subtitle = json["attrs"]["subtitle"]
+        
+        content = Content(date=day, subtitle=subtitle, data=json) # type: ignore
         db.session.add(content)
         db.session.commit()
         

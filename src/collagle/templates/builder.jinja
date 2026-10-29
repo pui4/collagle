@@ -19,6 +19,8 @@
                 <ul class="items vert toolbar">
                     <li style="padding-top: 15px;"><img src="static/arrowicon.svg" class="toolbar_icon" onclick=move_up() title="Move up a layer"></li>
                     <li><img src="static/arrowicon.svg" style="transform: rotate(180deg);" class="toolbar_icon" onclick=move_down() title="Move down a layer"></li>
+                    <li><img src="static/flipicon.svg" class="toolbar_icon" onclick=flip_hori() title="Flip horizontally"></li>
+                    <li><img src="static/flipicon.svg" style="transform: rotate(90deg);" class="toolbar_icon" onclick=flip_vert() title="Flip vertically"></li>
                     <li><img src="static/binicon.svg" class="toolbar_icon" onclick=remove() title="Delete"></li>
                     <li style="margin-top: auto;"><img src="static/tickicon.svg" class="toolbar_icon" onclick="submit()" title="Submit"></li>
                 </ul>
@@ -37,9 +39,10 @@
         <div class="border">
             <div class="modal">
                 <div id="frame"></div>
+                <p>Are you happy with this art and are ready to sumbit?</p>
                 <div style="margin-top: auto;">
                     <div class="border">
-                        <input type="text" id="subtitle" placeholder="Caption">
+                        <input type="text" id="subtitle" placeholder="Caption" maxlength="500">
                     </div>
                     <div class="buttons">
                         <div class="border"><p class="button" onclick="modal_submit()">Submit</p></div>

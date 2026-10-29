@@ -3,11 +3,11 @@ const MAX_SIZE = 128;
 var current_symbol = undefined;
 
 const frames = [
-    ["/static/frames/0.png", 0.451030928],
-    ["/static/frames/1.png", 1.612903226],
-    ["/static/frames/2.png", 0.574712644],
-    ["/static/frames/3.png", 0.634057971],
-    ["/static/frames/4.png", 0.56]
+    "/static/frames/0.png",
+    "/static/frames/1.png",
+    "/static/frames/2.png",
+    "/static/frames/3.png",
+    "/static/frames/4.png"
 ];
 
 fetch("/api/get_today").then(res => res.json().then((res_json) => {
@@ -120,15 +120,14 @@ on_symbol_click = (id) => {
 
 
             current_symbol = new Konva.Image({
-                x: 0,
-                y: 0,
+                x: stage.width() / 2 - width / 2,
+                y: stage.height() / 2 - height / 2,
                 image: sym_img,
                 width: width,
                 height: height,
                 draggable: true,
                 name: "selectable",
                 id: id,
-                img_url: window.res_json["symbols"][id][0]
             });
             layer.add(current_symbol);
             tr.nodes([current_symbol]);
@@ -228,7 +227,7 @@ function submit() {
 
     const target_frame = frames[Math.floor(Math.random() * frames.length)];
 
-    const frame_img = new Image();
+    /* const frame_img = new Image();
     frame_img.src = target_frame[0];
     frame_img.onload = () => {
         const frame_img_ele = document.createElement("img");
@@ -236,7 +235,37 @@ function submit() {
         frame_img_ele.style = `width: ${Math.floor(frame_img.naturalWidth * target_frame[1])}px;`;
         console.log(`width: ${Math.floor(frame_img.naturalWidth * target_frame[1])}px;`);
         frame_ctn.appendChild(frame_img_ele);
+    }; */
+
+    tr.nodes([])
+    const export_frame = stage.toDataURL();
+    const art_img = new Image();
+    art_img.src = export_frame;
+    art_img.onload = () => {
+        const frame_img = new Image();
+        frame_img.src = target_frame;
+        frame_img.onload = () => {
+            const frame_w = Math.floor(frame_img.naturalWidth * 0.862068966);
+            const frame_h = Math.floor(frame_img.naturalHeight * 0.862068966);
+
+            frame_ctn.style.width = `${frame_w}px`;
+            frame_ctn.style.height = `${frame_h}px`;
+
+            const art_img_ele = document.createElement("img");
+            art_img_ele.setAttribute("src", export_frame);
+            art_img_ele.classList.add("render_frame");
+
+            const frame_img_ele = document.createElement("img");
+            frame_img_ele.setAttribute("src", target_frame);
+            frame_img_ele.style.width = `${Math.floor(frame_img.naturalWidth * 0.862068966)}px`;
+            frame_img_ele.style.height = `${Math.floor(frame_img.naturalHeight * 0.862068966)}px`;
+            frame_img_ele.classList.add("frame_image")
+
+            frame_ctn.appendChild(frame_img_ele);
+            frame_ctn.appendChild(art_img_ele);
+        }
     };
+    
 }
 
 function modal_cancel() {
@@ -261,4 +290,22 @@ function modal_submit() {
     }).then((resp) => {
         window.location.reload();
     })
+}
+
+function flip_vert() {
+    if (current_symbol !== undefined) {
+        current_symbol.y(current_symbol.y() + current_symbol.height() * (current_symbol.scaleY() / Math.abs(current_symbol.scaleY())));
+        current_symbol.offsetY(current_symbol.height() / 2);
+        current_symbol.scaleY(-current_symbol.scaleY());
+        current_symbol.offsetY(0);
+    }
+}
+
+function flip_hori() {
+    if (current_symbol !== undefined) {
+        current_symbol.x(current_symbol.x() + current_symbol.width() * (current_symbol.scaleX() / Math.abs(current_symbol.scaleX())));
+        current_symbol.offsetX(current_symbol.width() / 2);
+        current_symbol.scaleX(-current_symbol.scaleX());
+        current_symbol.offsetX(0);
+    }
 }
