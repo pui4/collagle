@@ -16,7 +16,7 @@
     <div class="main_ctn">
         <div class="canvas_ctn">
             <div class="border">
-                <ul class="items vert toolbar" style="overflow: hidden;">
+                <ul class="items vert toolbar">
                     <li style="padding-top: 15px;"><img src="static/arrowicon.svg" class="toolbar_icon" onclick=move_up() title="Move up a layer"></li>
                     <li><img src="static/arrowicon.svg" style="transform: rotate(180deg);" class="toolbar_icon" onclick=move_down() title="Move down a layer"></li>
                     <li><img src="static/binicon.svg" class="toolbar_icon" onclick=remove() title="Delete"></li>
@@ -24,7 +24,7 @@
                 </ul>
             </div>
             <div id="container" class="border"></div>
-            <div class="border">
+            <div class="border" style="overflow-x: hidden;">
                 <ul id="pallet" class="items vert"></ul>
             </div>
         </div>

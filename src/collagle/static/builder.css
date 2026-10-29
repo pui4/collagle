@@ -96,6 +96,7 @@
 .toolbar {
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .toolbar_icon {
