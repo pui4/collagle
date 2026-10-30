@@ -1,6 +1,7 @@
 import os
 import random
 import click
+import traceback
 from html_sanitizer import Sanitizer
 from pathlib import Path
 from datetime import date

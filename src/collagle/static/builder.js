@@ -52,6 +52,8 @@ const stage = new Konva.Stage({
 const layer = new Konva.Layer();
 stage.add(layer);
 const tr = new Konva.Transformer({
+    flipEnabled: false,
+
     enabledAnchors: ["top-left", "top-right", "bottom-left", "bottom-right"],
     borderStroke: "#205",
     borderStrokeWidth: 3,
@@ -283,19 +285,27 @@ function modal_submit() {
 }
 
 function flip_vert() {
-    if (current_symbol !== undefined) {
-        current_symbol.y(current_symbol.y() + current_symbol.height() * (current_symbol.scaleY() / Math.abs(current_symbol.scaleY())));
-        current_symbol.offsetY(current_symbol.height() / 2);
-        current_symbol.scaleY(-current_symbol.scaleY());
-        current_symbol.offsetY(0);
-    }
+    flip("y");
 }
 
 function flip_hori() {
-    if (current_symbol !== undefined) {
-        current_symbol.x(current_symbol.x() + current_symbol.width() * (current_symbol.scaleX() / Math.abs(current_symbol.scaleX())));
-        current_symbol.offsetX(current_symbol.width() / 2);
+    flip("x");
+}
+
+function flip(axis) {
+    if (current_symbol === undefined) return;
+
+    const centre = { x: current_symbol.width() / 2, y: current_symbol.height() / 2 }
+    const before = current_symbol.getAbsoluteTransform().point(centre)
+
+    if (axis === "x") {
         current_symbol.scaleX(-current_symbol.scaleX());
-        current_symbol.offsetX(0);
+    } else {
+        current_symbol.scaleY(-current_symbol.scaleY());
     }
+
+    const after = current_symbol.getAbsoluteTransform().point(centre);
+
+    current_symbol.x(current_symbol.x() + (before.x - after.x));
+    current_symbol.y(current_symbol.y() + (before.y - after.y));
 }

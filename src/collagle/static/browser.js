@@ -7,9 +7,11 @@ const frames = [
 ];
 
 const d = new Date()
+const today = d.toLocaleDateString("en-GB")
+const parts = today.split("/")
+window.date = `${parts[2]}-${parts[1]}-${parts[0]}`
 
-window.before = -1;
-window.day = d.toISOString().split("T")[0];
+window.before = -1;;
 
 window.loading = false;
 
@@ -19,7 +21,7 @@ function gen_images() {
     if (window.loading) return;
     window.loading = true;
 
-    fetch(`/api/get_content?day=${window.day}&before=${window.before}`).then((resp) => {
+    fetch(`/api/get_content?date=${window.date}&before=${window.before}`).then((resp) => {
         if (resp.status == 200) {
             resp.json().then(async (todays) => {
                 for (let i = 0; i < todays["content"].length; i++) {
@@ -123,7 +125,19 @@ window.addEventListener('scroll', () => {
 })
 
 const date_selector = document.getElementById("date");
+date_selector.min = "2026-10-29";
+date_selector.max = window.date;
 date_selector.onchange = () => {
+    console.log(date_selector.value)
+    
+    if (date_selector.value == "") {
+        date_selector.value = window.date;
+    }
+
+    const container = document.getElementById("pictures");
+    container.innerHTML = "";
+
+    window.before = -1;
     window.date = date_selector.value;
     gen_images();
 }

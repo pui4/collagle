@@ -65,6 +65,7 @@ body {
 .middle {
     position: absolute;
     left: 50%;
+    transform: translateX(-50%);
 }
 
 .modal_ctn {
@@ -103,4 +104,5 @@ body {
 .help_txt {
     margin: 30px;
     margin-top: auto;
+    font-size: x-large;
 }
