@@ -227,16 +227,6 @@ function submit() {
 
     const target_frame = frames[Math.floor(Math.random() * frames.length)];
 
-    /* const frame_img = new Image();
-    frame_img.src = target_frame[0];
-    frame_img.onload = () => {
-        const frame_img_ele = document.createElement("img");
-        frame_img_ele.setAttribute("src", target_frame[0]);
-        frame_img_ele.style = `width: ${Math.floor(frame_img.naturalWidth * target_frame[1])}px;`;
-        console.log(`width: ${Math.floor(frame_img.naturalWidth * target_frame[1])}px;`);
-        frame_ctn.appendChild(frame_img_ele);
-    }; */
-
     tr.nodes([])
     const export_frame = stage.toDataURL();
     const art_img = new Image();

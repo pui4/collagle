@@ -1,16 +1,26 @@
 import os
 import random
 import click
+from html_sanitizer import Sanitizer
 from pathlib import Path
 from datetime import date
 from flask import Flask, render_template, jsonify, request, make_response
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import select
 from sqlalchemy.orm import DeclarativeBase, mapped_column
 from sqlalchemy.dialects.postgresql import JSONB
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql:///data'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+sanitizer = Sanitizer()
+""" limiter = Limiter(
+    get_remote_address,
+    app=app
+) """
 
 class Base(DeclarativeBase):
     pass
@@ -44,9 +54,9 @@ app.cli.add_command(init_db_command)
 def home():
     return render_template("home.jinja", has_cookie=request.cookies.get(date.today().isoformat(), default=False))
 
-@app.route("/test")
-def test():
-    return render_template("test_builder.jinja")
+@app.route("/gallery")
+def gallery():
+    return render_template("browser.jinja")
 
 def gen_today(seed: str):
     rng = random.Random(seed)
@@ -98,6 +108,7 @@ def get_today():
         })
 
 @app.route("/api/submit", methods=['POST'])
+#@limiter.limit("1 per minute")
 def submit():
     json = request.json
     
@@ -121,6 +132,9 @@ def submit():
             
             if attrs["current_tint"] not in pallet.pallet: # type: ignore
                 return "INVALID", 403
+
+            if object["className"] != "Image":
+                return "INVALID", 403
         
         if type(json["attrs"]["subtitle"]) is not str or len(json["attrs"]["subtitle"]) > 500:
             return "INVALID", 403
@@ -128,7 +142,9 @@ def submit():
         if json["attrs"]["subtitle"] == "":
             subtitle = "Untitled"
         else:
-            subtitle = json["attrs"]["subtitle"]
+            subtitle = sanitizer.sanitize(json["attrs"]["subtitle"])
+            if subtitle == "":
+                subtitle = "Untitled"
         
         content = Content(date=day, subtitle=subtitle, data=json) # type: ignore
         db.session.add(content)
@@ -145,6 +161,46 @@ def submit():
     except Exception as e:
         print(e)
         return "INVALID", 403
+
+#TODO: make day agnostic
+@app.route("/api/get_content")
+#@limiter.limit("1 per second")
+def get_content():
+    try:
+        day = request.args.get("date", date.today().isoformat())
+        before = request.args.get("before", type=int)
+        num = 5
+        
+        symbols = db.session.get(Symbols, day)
+        
+        query = select(Content).where(Content.date == day)
+        if before is not None and before != -1:
+            query = query.where(Content.id < before)
+            
+            if before <= 0:
+                return "OUT", 204
+        
+        rows = db.session.scalars(
+            query
+            .order_by(Content.id.desc())
+            .limit(num)
+        ).all()
+        
+        data = {
+            "symbols": symbols.symbols, # type: ignore
+            "content": [],
+            "day": day,
+            "id": rows[-1].id
+        }
+        for row in rows:
+            data["content"].append({
+                "subtitle": row.subtitle,
+                "data": row.data,
+            })
+            
+        return jsonify(data)
+    except:
+        return "OUT", 204
 
 def main() -> None:
     app.run(debug=True, host="0.0.0.0")

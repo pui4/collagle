@@ -1,2 +1,18 @@
 {% extends "base.jinja" %}
 
+{% block head %}
+    <script src="https://unpkg.com/konva@10/konva.min.js"></script>
+    <link rel="stylesheet" href="static/browser.css">
+{% endblock %}
+
+{% block topbar %}
+    <input type="date" id="date">
+{% endblock %}
+
+{% block content %}
+    <div id="renderer"></div>
+
+    <ul id="pictures"></ul>
+
+    <script src="/static/browser.js"></script>
+{% endblock %}

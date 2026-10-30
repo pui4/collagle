@@ -5,24 +5,21 @@
     <link rel="stylesheet" href="static/builder.css">
 {% endblock %}
 
-{% block content %}
-    <svg width="0" height="0" style="position:absolute">
-        <filter id="wobble">
-            <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" seed="3" result="noise"/>
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G"/>
-        </filter>
-    </svg>
+{% block topbar %}
+    <p style="font-size: larger;">Draw!</p>
+{% endblock %}
 
+{% block content %}
     <div class="main_ctn">
         <div class="canvas_ctn">
             <div class="border">
                 <ul class="items vert toolbar">
-                    <li style="padding-top: 15px;"><img src="static/arrowicon.svg" class="toolbar_icon" onclick=move_up() title="Move up a layer"></li>
-                    <li><img src="static/arrowicon.svg" style="transform: rotate(180deg);" class="toolbar_icon" onclick=move_down() title="Move down a layer"></li>
-                    <li><img src="static/flipicon.svg" class="toolbar_icon" onclick=flip_hori() title="Flip horizontally"></li>
-                    <li><img src="static/flipicon.svg" style="transform: rotate(90deg);" class="toolbar_icon" onclick=flip_vert() title="Flip vertically"></li>
-                    <li><img src="static/binicon.svg" class="toolbar_icon" onclick=remove() title="Delete"></li>
-                    <li style="margin-top: auto;"><img src="static/tickicon.svg" class="toolbar_icon" onclick="submit()" title="Submit"></li>
+                    <li style="padding-top: 15px;"><img src="static/icons/arrowicon.svg" class="toolbar_icon" onclick=move_up() title="Move up a layer"></li>
+                    <li><img src="static/icons/arrowicon.svg" style="transform: rotate(180deg);" class="toolbar_icon" onclick=move_down() title="Move down a layer"></li>
+                    <li><img src="static/icons/flipicon.svg" class="toolbar_icon" onclick=flip_hori() title="Flip horizontally"></li>
+                    <li><img src="static/icons/flipicon.svg" style="transform: rotate(90deg);" class="toolbar_icon" onclick=flip_vert() title="Flip vertically"></li>
+                    <li><img src="static/icons/binicon.svg" class="toolbar_icon" onclick=remove() title="Delete"></li>
+                    <li style="margin-top: auto;"><img src="static/icons/tickicon.svg" class="toolbar_icon" onclick="submit()" title="Submit"></li>
                 </ul>
             </div>
             <div id="container" class="border"></div>
@@ -35,7 +32,7 @@
         </div>
     </div>
 
-    <div id="modal">
+    <div id="modal" class="modal_ctn">
         <div class="border">
             <div class="modal">
                 <div id="frame"></div>
