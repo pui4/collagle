@@ -2,7 +2,9 @@
 
 {% block head %}
     <script src="https://unpkg.com/konva@10/konva.min.js"></script>
-    <link rel="stylesheet" href="static/browser.css">
+    <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://unpkg.com/js-cookie@3.0.8/dist/js.cookie.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='browser.css') }}">
 {% endblock %}
 
 {% block topbar %}
@@ -12,9 +14,39 @@
 {% endblock %}
 
 {% block content %}
+    <div id="invis_holder"></div>
+
+    <script>
+        window.post_id = {{ post_id|default(none)|tojson }}
+    </script>
+
     <div id="renderer"></div>
 
     <ul id="pictures"></ul>
+
+    <div id="post_modal" class="modal_ctn">
+        <div class="border">
+            <div class="modal">
+                <div class="border">
+                    <div id="share_img_ctn"></div>
+                </div>
+                <div class="buttons">
+                    <div class="border"><p class="button" onclick="close_share()">Close</p></div>
+                    <div class="border"><p class="button" onclick="share_clicked()">Share</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="coppied_modal", class="modal_ctn">
+        <div class="border">
+            <p style="padding: 20px;">Coppied image to clipboard!</p>
+        </div>
+    </div>
+
+    <div id="own_post" class="border" onclick="own_post_click()">
+        <p>Show own post</p>
+    </div>
 
     <script src="/static/browser.js"></script>
 {% endblock %}

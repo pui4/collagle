@@ -1,7 +1,7 @@
 import os
 import random
 import click
-import traceback
+import base62
 from html_sanitizer import Sanitizer
 from pathlib import Path
 from datetime import date
@@ -54,6 +54,10 @@ app.cli.add_command(init_db_command)
 @app.route("/")
 def home():
     return render_template("home.jinja", has_cookie=request.cookies.get(date.today().isoformat(), default=False))
+
+@app.route("/p/<post_id>")
+def post(post_id):
+    return render_template("browser.jinja", post_id=post_id)
 
 @app.route("/gallery")
 def gallery():
@@ -154,8 +158,7 @@ def submit():
         resp = make_response("OK")
         resp.set_cookie(
             day,
-            "1",
-            max_age=60 * 60 * 24,
+            base62.encode(content.id),
         )
         
         return resp
@@ -163,7 +166,6 @@ def submit():
         print(e)
         return "INVALID", 403
 
-#TODO: make day agnostic
 @app.route("/api/get_content")
 #@limiter.limit("1 per second")
 def get_content():
@@ -196,12 +198,35 @@ def get_content():
         for row in rows:
             data["content"].append({
                 "subtitle": row.subtitle,
-                "data": row.data,
+                "content": row.data,
+                "id": base62.encode(row.id)
             })
             
         return jsonify(data)
     except:
         return "OUT", 204
+    
+@app.route("/api/get_post")
+def get_post():
+    try:
+        target_post = request.args.get("id")
+        if target_post == None or target_post == "":
+            return "NONE"
+        
+        target_post_id = base62.decode(target_post)
+        
+        post = db.session.get(Content, target_post_id)
+        symbols = db.session.get(Symbols, post.date) # type: ignore
+        
+        data = {
+            "symbols": symbols.symbols, # type: ignore
+            "content": post.data, # type: ignore
+            "subtitle": post.subtitle # type: ignore
+        }
+        
+        return jsonify(data)
+    except:
+        return "NONE"
 
 def main() -> None:
     app.run(debug=True, host="0.0.0.0")

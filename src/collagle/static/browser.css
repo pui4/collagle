@@ -12,6 +12,19 @@
     text-align: center;
 }
 
+.invis_pic {
+    display: flex;
+    margin: 0;
+    padding-top: 60px;
+    align-items: center;
+    flex-direction: column;
+    list-style-type: none;
+    text-align: center;
+    position: fixed;
+    left: -100000px;
+    top: 0;
+}
+
 .rendered_img {
     background-color: white;
     width: 350px;
@@ -42,8 +55,9 @@
     pointer-events: none;
 }
 
-.subtitle {
-    padding-bottom: 75vh;
+.main_frame_ctn {
+    margin-bottom: calc(75vh - 80px);
+    padding: 40px;
 }
 
 #date {
@@ -53,4 +67,40 @@
 #date:focus {
     border: none;
     outline: none;
+}
+
+.buttons {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 50px;
+    margin-top: auto;
+    margin-bottom: 30px;
+}
+
+.subtitle {
+    font-size: xx-large;
+    margin-bottom: 0;
+}
+
+.url {
+    text-align: center;
+    margin: 0;
+    padding-bottom: 20px;
+}
+
+#share_img_ctn {
+    background-image: url(icons/bg.png);
+    background-repeat: repeat;
+}
+
+#own_post {
+    position: sticky;
+    bottom: 30px;
+    margin-right: 30px;
+    cursor: pointer;
+    display: none;
+}
+#own_post p {
+    margin: 20px;
 }

@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>collagle</title>
-    <link rel="icon" type="image/x-png" href="static/icons/icon.png">
-    <link rel="stylesheet" href="static/base.css">
+    <link rel="icon" type="image/x-png" href="{{ url_for('static', filename='icons/icon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
     {% block head %}{% endblock %}
 </head>
 <body>

@@ -280,7 +280,7 @@ function modal_submit() {
         },
         body: json
     }).then((resp) => {
-        window.location.reload();
+        //window.location.reload();
     })
 }
 
