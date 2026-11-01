@@ -168,7 +168,7 @@ window.addEventListener('scroll', () => {
 })
 
 const date_selector = document.getElementById("date");
-date_selector.min = "2026-10-29";
+date_selector.min = "2026-11-01";
 date_selector.max = window.date;
 date_selector.onchange = () => {
     console.log(date_selector.value)
