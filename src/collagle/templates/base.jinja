@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
 
     <meta property="og:title" content="collagle" />
-    <meta property="og:description" content="lol" />
+    <meta property="og:description" content="Daily shapes and colours" />
     <meta property="og:image" content="{{ url_for('static', filename='icons/logo.png') }}" />
     <meta property="og:url" content="https://collagle.net" />
     {% block head %}{% endblock %}
@@ -24,11 +24,14 @@
     <div class="border topborder">
         <ul class="topbar">
             <li><a href="/"><img src="/static/icons/logo.png" class="logo" title="Home"></a></li>
-            <li><a href="/gallery"><img src="/static/icons/world.png" class="logo" title="Gallery"></a></li>
+            <li><a href="/gallery"><img src="/static/icons/galleryicon.svg" class="logo" title="Gallery"></a></li>
             <li class="middle">
                 {% block topbar %}{% endblock %}
             </li>
-            <li class="end"><img src="/static/icons/questionicon.svg" class="logo" style="cursor: pointer;" onclick="help_clicked()" title="Help"></li>
+            <li class="end">
+                <a href="https://ko-fi.com/pooeyfour"><img src="/static/icons/kofi_symbol.png" class="logo" style="padding-right: 20px;"></a>
+                <img src="/static/icons/questionicon.svg" class="logo" style="cursor: pointer;" onclick="help_clicked()" title="Help">
+            </li>
         </ul>
     </div>
 

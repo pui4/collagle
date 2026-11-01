@@ -16,6 +16,8 @@
   };
 
   env = {
+    DATABASE_URL = "postgresql:///data";
+
     PALLET_COLOURS = 16;
     NUM_SYMBOLS = 6;
     MAX_SYMBOL_AMOUNT = 10;

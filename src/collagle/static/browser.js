@@ -41,9 +41,19 @@ function gen_images() {
                 }
             });
         } else if (resp.status == 204) {
-            window.before = -1;
-            window.loading = false;
-            gen_images();
+            const container = document.getElementById("pictures");
+
+            if (container.innerHTML == "") {
+                setTimeout(() => {
+                    window.before = -1;
+                    window.loading = false;
+                    gen_images();
+                }, 5000);
+            } else {
+                window.before = -1;
+                window.loading = false;
+                gen_images();
+            }
         } else {
             setTimeout(() => {
                 window.loading = false;
@@ -145,7 +155,15 @@ function tint(object) {
 const scroll_offset = 100;
 window.addEventListener('scroll', () => {
     if (window.scrollY + window.innerHeight >= document.body.scrollHeight - scroll_offset) {
-        gen_images();
+        const img_ctn = document.getElementById("pictures")
+        if (img_ctn.innerHTML == "") {
+            window.loading = true;
+            setTimeout(() => {
+                gen_images();
+            }, 5000);
+        } else {
+            gen_images();
+        }
     }
 })
 
