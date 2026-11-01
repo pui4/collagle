@@ -1,0 +1,56 @@
+services:
+  db:
+    image: docker.io/library/postgres:18
+    environment:
+      POSTGRES_USER: collagle
+      POSTGRES_DB: collagle
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes: [pgdata:/var/lib/postgresql]
+    networks: [backend]
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U collagle"]
+      interval: 5s
+      retries: 10
+
+  init:
+    build: .
+    environment:
+      DATABASE_URL: postgresql://collagle:${DB_PASSWORD}@db:5432/collagle
+    command: ["flask", "--app", "collagle", "init-db"]
+    env_file: .env
+    depends_on: { db: { condition: service_healthy } }
+    networks: [backend]
+    restart: "no"
+
+  web:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://collagle:${DB_PASSWORD}@db:5432/collagle
+    volumes:
+      - ./src/collagle/templates:/app/src/collagle/templates:ro,Z
+      - ./src/collagle/static:/app/src/collagle/static:ro,Z
+    depends_on:
+      db: { condition: service_healthy }
+      init: { condition: service_completed_successfully }
+    networks: [backend, frontend]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN}
+    networks: [frontend]
+    restart: unless-stopped
+
+networks:
+  backend: { internal: true }
+  frontend:
+
+volumes:
+  pgdata:

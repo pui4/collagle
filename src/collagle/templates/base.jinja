@@ -6,6 +6,11 @@
     <title>collagle</title>
     <link rel="icon" type="image/x-png" href="{{ url_for('static', filename='icons/icon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+
+    <meta property="og:title" content="collagle" />
+    <meta property="og:description" content="lol" />
+    <meta property="og:image" content="{{ url_for('static', filename='icons/logo.png') }}" />
+    <meta property="og:url" content="https://collagle.net" />
     {% block head %}{% endblock %}
 </head>
 <body>

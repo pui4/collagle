@@ -163,6 +163,7 @@ on_symbol_click = (id) => {
                 }
             });
         }
+        sym_img.crossOrigin = 'Anonymous';
         sym_img.src = window.res_json["symbols"][id][0];
     }
 }
@@ -233,8 +234,10 @@ function submit() {
     const export_frame = stage.toDataURL();
     const art_img = new Image();
     art_img.src = export_frame;
+    art_img.crossOrigin = 'Anonymous';
     art_img.onload = () => {
         const frame_img = new Image();
+        frame_img.crossOrigin = 'Anonymous';
         frame_img.src = target_frame;
         frame_img.onload = () => {
             const frame_w = Math.floor(frame_img.naturalWidth * 0.862068966);
@@ -280,7 +283,7 @@ function modal_submit() {
         },
         body: json
     }).then((resp) => {
-        //window.location.reload();
+        window.location.reload();
     })
 }
 

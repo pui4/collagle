@@ -2,19 +2,22 @@ import os
 import random
 import click
 import base62
+from urllib.parse import urlparse
 from html_sanitizer import Sanitizer
 from pathlib import Path
 from datetime import date
-from flask import Flask, render_template, jsonify, request, make_response
+from flask import Flask, render_template, jsonify, request, make_response, url_for
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import select
 from sqlalchemy.orm import DeclarativeBase, mapped_column
 from sqlalchemy.dialects.postgresql import JSONB
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql:///data'
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 sanitizer = Sanitizer()
@@ -51,6 +54,14 @@ def init_db_command():
 
 app.cli.add_command(init_db_command)
 
+def add_cors_headers(response):
+    origin = request.headers.get('Origin')
+    if origin:
+        response.headers['Access-Control-Allow-Origin'] = origin
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    return response
+
 @app.route("/")
 def home():
     return render_template("home.jinja", has_cookie=request.cookies.get(date.today().isoformat(), default=False))
@@ -62,6 +73,9 @@ def post(post_id):
 @app.route("/gallery")
 def gallery():
     return render_template("browser.jinja")
+
+def clean_symbols(symbols):
+    return [[urlparse(url).path, count] for url, count in symbols]
 
 def gen_today(seed: str):
     rng = random.Random(seed)
@@ -80,10 +94,14 @@ def gen_today(seed: str):
     
     all_symbols = list(sorted(Path(f"{app.root_path}/static/symbols").glob("*.svg")))
     
+    def pick_symbol():
+        name = all_symbols[rng.randrange(0, len(all_symbols))].name
+        return url_for("static", filename=f"symbols/{name}")
+
     for _ in range(0, num_symbols):
-        gen = f"{request.url_root}static/symbols/{all_symbols[rng.randrange(0, len(all_symbols) - 1)].name}"
+        gen = pick_symbol()
         while gen in symbols:
-            gen = f"{request.url_root}static/symbols/{all_symbols[rng.randrange(0, len(all_symbols) - 1)].name}"
+            gen = pick_symbol()
         symbols.append(gen)
     for index, symbol in enumerate(symbols):
         symbols[index] = [symbol, rng.randrange(1, int(os.getenv("MAX_SYMBOL_AMOUNT")))] # type: ignore
@@ -92,6 +110,7 @@ def gen_today(seed: str):
         "symbols": symbols,
         "pallet": pallet
     }
+
 
 @app.route("/api/get_today", methods=['GET'])
 def get_today():
@@ -108,7 +127,7 @@ def get_today():
         return jsonify(todays)
     else:
         return jsonify({
-            "symbols": symbols.symbols,
+            "symbols": clean_symbols(symbols.symbols),
             "pallet": pallet.pallet
         })
 
@@ -190,7 +209,7 @@ def get_content():
         ).all()
         
         data = {
-            "symbols": symbols.symbols, # type: ignore
+            "symbols": clean_symbols(symbols.symbols), # type: ignore
             "content": [],
             "day": day,
             "id": rows[-1].id
@@ -219,7 +238,7 @@ def get_post():
         symbols = db.session.get(Symbols, post.date) # type: ignore
         
         data = {
-            "symbols": symbols.symbols, # type: ignore
+            "symbols": clean_symbols(symbols.symbols), # type: ignore
             "content": post.data, # type: ignore
             "subtitle": post.subtitle # type: ignore
         }
