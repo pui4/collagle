@@ -7,9 +7,8 @@ const frames = [
 ];
 
 const d = new Date()
-const today = d.toLocaleDateString("en-GB")
-const parts = today.split("/")
-window.date = `${parts[2]}-${parts[1]}-${parts[0]}`
+const today = d.toLocaleDateString("en-CA", { timeZone: "Europe/London" })
+window.date = today
 
 window.before = -1;;
 
