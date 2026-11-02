@@ -94,6 +94,7 @@ function tint() {
 }
 
 on_symbol_click = (id) => {
+    window.edited = true;
     console.log(window.res_json["symbols"][id][0]);
 
     const amount = document.getElementsByClassName("sums")[id];
@@ -283,6 +284,7 @@ function modal_submit() {
         },
         body: json
     }).then((resp) => {
+        window.edited = false;
         window.location.reload();
     })
 }
@@ -312,3 +314,11 @@ function flip(axis) {
     current_symbol.x(current_symbol.x() + (before.x - after.x));
     current_symbol.y(current_symbol.y() + (before.y - after.y));
 }
+
+window.addEventListener("beforeunload", (e) => {
+    if (window.edited) {
+        var message = "Are you sure you want to leave as your art will be lost?";
+        (e || window.event).returnValue = message;
+        return message;
+    }
+})
