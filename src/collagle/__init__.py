@@ -1,7 +1,9 @@
 import os
+import re
 import random
 import click
 import base62
+import traceback
 from urllib.parse import urlparse
 from html_sanitizer import Sanitizer
 from pathlib import Path
@@ -9,22 +11,26 @@ from datetime import date
 from flask import Flask, render_template, jsonify, request, make_response, url_for
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+""" from flask_mobility import Mobility """
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import select
 from sqlalchemy.orm import DeclarativeBase, mapped_column
 from sqlalchemy.dialects.postgresql import JSONB
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+MOBILE_RE = re.compile(r"Mobile|Android|iPhone|iPod|iPad", re.I)
+
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+""" Mobility(app) """
 
 sanitizer = Sanitizer()
-""" limiter = Limiter(
+limiter = Limiter(
     get_remote_address,
     app=app
-) """
+)
 
 class Base(DeclarativeBase):
     pass
@@ -132,7 +138,7 @@ def get_today():
         })
 
 @app.route("/api/submit", methods=['POST'])
-#@limiter.limit("1 per minute")
+@limiter.limit("1 per hour")
 def submit():
     json = request.json
     
@@ -186,12 +192,15 @@ def submit():
         return "INVALID", 403
 
 @app.route("/api/get_content")
-#@limiter.limit("1 per second")
 def get_content():
     try:
         day = request.args.get("date", date.today().isoformat())
         before = request.args.get("before", type=int)
-        num = 5
+        
+        if (bool(MOBILE_RE.search(request.headers.get("User-Agent", "")))):
+            num = 1
+        else:
+            num = 5
         
         symbols = db.session.get(Symbols, day)
         
@@ -208,6 +217,9 @@ def get_content():
             .limit(num)
         ).all()
         
+        if not rows:
+            return "OUT", 204
+        
         data = {
             "symbols": clean_symbols(symbols.symbols), # type: ignore
             "content": [],
@@ -223,6 +235,7 @@ def get_content():
             
         return jsonify(data)
     except:
+        traceback.print_exc()
         return "OUT", 204
     
 @app.route("/api/get_post")

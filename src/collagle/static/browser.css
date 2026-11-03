@@ -104,3 +104,8 @@
 #own_post p {
     margin: 20px;
 }
+
+.loading_txt {
+    text-align: center;
+    font-size: xx-large;
+}

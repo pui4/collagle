@@ -41,6 +41,7 @@ dependencies = [
     { name = "click" },
     { name = "flask" },
     { name = "flask-limiter" },
+    { name = "flask-mobility" },
     { name = "flask-sqlalchemy" },
     { name = "gunicorn" },
     { name = "html-sanitizer" },
@@ -53,6 +54,7 @@ requires-dist = [
     { name = "click", specifier = ">=8.5.0" },
     { name = "flask", specifier = ">=3.1.3" },
     { name = "flask-limiter", specifier = ">=4.1.1" },
+    { name = "flask-mobility", specifier = ">=2.0.1" },
     { name = "flask-sqlalchemy", specifier = ">=3.1.1" },
     { name = "gunicorn", specifier = ">=26.2.0" },
     { name = "html-sanitizer", specifier = ">=2.7.0" },
@@ -102,6 +104,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/4e/98/71780be5d1afb941219c4b48d241d4e246e3062b017caa4e79c4dc71314c/flask_limiter-4.1.1.tar.gz", hash = "sha256:ca11608fc7eec43dcea606964ca07c3bd4ec1ae89043a0f67f717899a4f48106", size = 403198, upload-time = "2025-12-06T17:39:00.575Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/75/7c/9fe9ffc83be199011bb0c6deb82cdcbc5a355601e380581de9dbc30490dd/flask_limiter-4.1.1-py3-none-any.whl", hash = "sha256:e1ae13e06e6b3e39a4902e7d240b901586b25932c2add7bd5f5eeb4bdc11111b", size = 30554, upload-time = "2025-12-06T17:38:59.162Z" },
+]
+
+[[package]]
+name = "flask-mobility"
+version = "2.0.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "flask" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/53/2d/339ef6231a58a4587369979ed38d189ce9c630d8df0fb85dc4836cc2829b/Flask-Mobility-2.0.1.tar.gz", hash = "sha256:d05835e2e92f467ce2ddaed993bda21cf4ca54f73f39c574fad900f825715574", size = 39241, upload-time = "2023-11-21T10:42:22.476Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/15/41/513b3de17d0d3891f02997973aafcfce636fdd2af576221231488b7aa472/Flask_Mobility-2.0.1-py3-none-any.whl", hash = "sha256:e2154f2830eb8c1b3d069b67f65ebb7a0216506f08a52f58cde80fedc7763175", size = 3982, upload-time = "2023-11-21T10:42:20.833Z" },
 ]
 
 [[package]]
