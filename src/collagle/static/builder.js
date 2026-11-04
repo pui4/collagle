@@ -144,7 +144,11 @@ on_symbol_click = (id) => {
 
                 current_symbol.width(current_symbol.width() * Math.abs(current_symbol.scaleX()));
                 current_symbol.height(current_symbol.height() * Math.abs(current_symbol.scaleY()));
-                current_symbol.scale({ x: 1, y: 1});
+                
+                current_symbol.scale({
+                    x: current_symbol.scaleX() < 0 ? -1 : 1,
+                    y: current_symbol.scaleY() < 0 ? -1 : 1
+                });
 
                 tint();
                 tr.forceUpdate();
