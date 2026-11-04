@@ -14,12 +14,14 @@
         <div class="canvas_ctn">
             <div class="border">
                 <ul class="items vert toolbar">
-                    <li style="padding-top: 15px;"><img src="static/icons/arrowicon.svg" class="toolbar_icon" onclick=move_up() title="Move up a layer"></li>
+                    <li style="padding-top: 15px;"><img src="static/icons/tickicon.svg" class="toolbar_icon" onclick="submit()" title="Submit"></li>
+                    <li><img src="static/icons/arrowicon.svg" class="toolbar_icon" onclick=move_up() title="Move up a layer"></li>
                     <li><img src="static/icons/arrowicon.svg" style="transform: rotate(180deg);" class="toolbar_icon" onclick=move_down() title="Move down a layer"></li>
                     <li><img src="static/icons/flipicon.svg" class="toolbar_icon" onclick=flip_hori() title="Flip horizontally"></li>
                     <li><img src="static/icons/flipicon.svg" style="transform: rotate(90deg);" class="toolbar_icon" onclick=flip_vert() title="Flip vertically"></li>
                     <li><img src="static/icons/binicon.svg" class="toolbar_icon" onclick=remove() title="Delete"></li>
-                    <li style="margin-top: auto;"><img src="static/icons/tickicon.svg" class="toolbar_icon" onclick="submit()" title="Submit"></li>
+                    <li><img src="static/icons/undo.svg" class="toolbar_icon disabled" onclick="undo()" id="undo" title="Undo"></li>
+                    <li><img src="static/icons/undo.svg" class="toolbar_icon flipped disabled" onclick="redo()" id="redo" title="Redo"></li>
                 </ul>
             </div>
             <div id="container" class="border"></div>

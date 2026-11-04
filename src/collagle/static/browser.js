@@ -66,6 +66,7 @@ function load_img(src) {
     return new Promise((resolve, reject) => {
         const img = new Image();
         img.onload = () => resolve(img);
+        img.crossOrigin = 'Anonymous';
         img.onerror = reject;
         img.src = src;
     });
