@@ -268,7 +268,9 @@ function modal_cancel() {
     modal.style = "display: none;"
 }
 
+window.submitted = false
 function modal_submit() {
+    if (window.submitted) return;
     const subtitle = document.getElementById("subtitle").value
     stage.setAttr("subtitle", subtitle);
 
@@ -286,6 +288,8 @@ function modal_submit() {
         window.edited = false;
         window.location.reload();
     })
+
+    window.submitted = true;
 }
 
 function flip_vert() {
